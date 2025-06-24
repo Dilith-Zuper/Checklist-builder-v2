@@ -140,6 +140,10 @@ console.log("📦 Extracted result from backend:", result);
 setChecklist(result.checklist || []);
 setActiveTab(2);
 showToast('Checklist extracted successfully!');
+    } finally {
+      setLoading(false);
+    }
+  };
 
 
   const updateChecklistItem = (id, field, value) => {
