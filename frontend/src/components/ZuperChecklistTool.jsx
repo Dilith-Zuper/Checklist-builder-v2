@@ -125,7 +125,7 @@ const ZuperChecklistTool = () => {
       //   method: 'POST',
       //   body: formData
       // });
- const response = await fetch(
+                                              const response = await fetch(
                                             `${import.meta.env.VITE_API_URL}/api/extract-checklist`,
                                             {
                                             method: 'POST',
@@ -133,13 +133,13 @@ const ZuperChecklistTool = () => {
                                             }
                                             );
 
-      
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.error || 'Failed to extract checklist');
       }
 
       const result = await response.json();
+      console.log("📦 Extracted result from backend:", result);
       setChecklist(result.checklist || []);
       setActiveTab(2);
       showToast('Checklist extracted successfully!');
@@ -147,41 +147,9 @@ const ZuperChecklistTool = () => {
       console.error('Extraction error:', error);
       showToast(error.message || 'Failed to extract checklist. Please try again.', 'error');
       
-      // Fallback to mock data for demo purposes
-      const mockChecklist = [
-        {
-          id: 1,
-          question: 'What is your preferred device?',
-          type: 'radio',
-          options: 'Phone,Laptop,Tablet',
-          required: true
-        },
-        {
-          id: 2,
-          question: 'Enter your feedback',
-          type: 'textArea',
-          options: '',
-          required: false
-        },
-        {
-          id: 3,
-          question: 'Upload profile picture',
-          type: 'multiImage',
-          options: '',
-          required: true
-        },
-        {
-          id: 4,
-          question: 'Select your state',
-          type: 'dropdown',
-          options: 'Tamil Nadu,Kerala,Karnataka,Andhra Pradesh',
-          required: true
-        }
-      ];
       
-      setChecklist(mockChecklist);
-      setActiveTab(2);
-      showToast('Using demo data for preview', 'error');
+      
+      
     } finally {
       setLoading(false);
     }
@@ -291,7 +259,7 @@ const ZuperChecklistTool = () => {
       //   })
       // });
 
-       const response = await fetch(
+                                                      const response = await fetch(
                                                   `${import.meta.env.VITE_API_URL}/api/submit-checklist`,
                                                   {
                                                     method: 'POST',
@@ -304,6 +272,7 @@ const ZuperChecklistTool = () => {
                                                     }),
                                                   }
                                                 );
+
 
       if (!response.ok) {
         const errorData = await response.json();
