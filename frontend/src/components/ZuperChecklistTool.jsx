@@ -130,27 +130,17 @@ const ZuperChecklistTool = () => {
 );
 
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to extract checklist');
-      }
+    const result = await response.json(); // 👈 Only call once
 
-      const result = await response.json();
-      console.log("📦 Extracted result from backend:", result);
-      setChecklist(result.checklist || []);
-      setActiveTab(2);
-      showToast('Checklist extracted successfully!');
-    } catch (error) {
-      console.error('Extraction error:', error);
-      showToast(error.message || 'Failed to extract checklist. Please try again.', 'error');
-      
-      
-      
-      
-    } finally {
-      setLoading(false);
-    }
-  };
+if (!response.ok) {
+  throw new Error(result.error || 'Failed to extract checklist');
+}
+
+console.log("📦 Extracted result from backend:", result);
+setChecklist(result.checklist || []);
+setActiveTab(2);
+showToast('Checklist extracted successfully!');
+
 
   const updateChecklistItem = (id, field, value) => {
     setChecklist(prev => prev.map(item => 
