@@ -1,0 +1,36 @@
+{
+  "name": "zuper-checklist-frontend",
+  "version": "1.0.0",
+  "description": "Zuper Checklist Import Tool - Frontend",
+  "main": "index.js",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "start": "vite preview --port 3000"
+  },
+  "dependencies": {
+    "lucide-react": "^0.263.1",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-select": "^5.10.1"
+  },
+  "devDependencies": {
+    "@types/react": "^18.2.15",
+    "@types/react-dom": "^18.2.7",
+    "@vitejs/plugin-react": "^4.0.3",
+    "autoprefixer": "^10.4.14",
+    "postcss": "^8.4.27",
+    "tailwindcss": "^3.3.3",
+    "vite": "^4.4.5"
+  },
+  "keywords": [
+    "zuper",
+    "checklist",
+    "excel",
+    "import",
+    "tool"
+  ],
+  "author": "Dilith Dinesh",
+  "license": "MIT"
+}
