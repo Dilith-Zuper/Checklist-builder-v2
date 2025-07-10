@@ -119,7 +119,7 @@ const generateZuperPayload = (checklist, config) => {
     };
 
     console.log('✅ Generated Zuper payload with dependency fields');
-    console.log(JSON.stringify(payload, null, 2));
+    // console.log(JSON.stringify(payload, null, 2));
     
     return payload;
 
@@ -141,7 +141,7 @@ const submitToZuper = async (payload, apiKey, region) => {
     console.log(`🚀 Submitting to Zuper API (region: ${region})`);
     
     console.log('📦 Final payload being submitted to Zuper:');
-    console.dir(payload, { depth: null });
+    // console.dir(payload, { depth: null });
     
     // Construct Zuper API URL
     const zuperUrl = `https://${region}.zuperpro.com/api/settings/checklist`;
