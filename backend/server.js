@@ -27,7 +27,7 @@ app.use(limiter);
 
 // CORS configuration
 app.use(cors({
-  origin:'https://checklistbuilder-zuper.netlify.app/',
+  origin:'https://checklistbuilder-zuper.netlify.app',
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization',  'X-API-Key','category_uid',
