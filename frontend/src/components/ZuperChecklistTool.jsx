@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { Upload, FileText, Check, X, Loader2, Settings, Send, AlertCircle, Eye, Code, RefreshCw, Clock, BarChart3 } from 'lucide-react';
+import { Upload, FileText, Check, X, Loader2, Settings, Send, AlertCircle, Eye, Code, RefreshCw, Clock, BarChart3, Download, Info } from 'lucide-react';
 import Select from 'react-select';
 import ErrorModal from './ErrorModal';
 
@@ -61,6 +61,35 @@ const ZuperChecklistTool = () => {
     { label: 'Signature', value: 'signature' },
     { label: 'Section Header', value: 'header' }
   ];
+
+  // Template format information
+  const templateInfo = {
+    allowedTypes: [
+      { keyword: 'textField', description: 'Single line text input' },
+      { keyword: 'textArea', description: 'Multi-line text input' },
+      { keyword: 'date', description: 'Date picker' },
+      { keyword: 'time', description: 'Time picker' },
+      { keyword: 'dateTime', description: 'Date and time picker' },
+      { keyword: 'dropdown', description: 'Single selection dropdown' },
+      { keyword: 'radio', description: 'Single selection radio buttons' },
+      { keyword: 'checkbox', description: 'Multiple selection checkboxes' },
+      { keyword: 'multiImage', description: 'Image upload field' },
+      { keyword: 'signature', description: 'Signature capture field' }
+    ],
+    requiredKeywords: [
+      { keyword: 'Yes', description: 'Field is required' },
+      { keyword: 'No', description: 'Field is optional' }
+    ],
+    dependentKeywords: [
+      { keyword: 'Yes', description: 'Field depends on another field' },
+      { keyword: 'No', description: 'Field is independent' }
+    ],
+    exampleFormat: `question | type | option | required | isDependent | dependentOn | dependentOptions
+What is your name? | textField | | Yes | No | | 
+Select your location | dropdown | New York,London,Tokyo | Yes | No | |
+Are you satisfied? | radio | Very Satisfied,Satisfied,Neutral,Dissatisfied | Yes | Yes | Select your location | New York
+Upload ID photo | multiImage | | Yes | No | |`
+  };
 
   // Region options
   const regionOptions = [
@@ -286,6 +315,23 @@ const ZuperChecklistTool = () => {
     setFile(selectedFile);
     if (errors.file) {
       setErrors(prev => ({ ...prev, file: '' }));
+    }
+  };
+
+  const downloadTemplate = () => {
+    try {
+      // Create a link element and trigger download
+      const link = document.createElement('a');
+      link.href = '/template.xlsx';
+      link.download = 'Checklist_Upload_Template.xlsx';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      
+      showToast('Template downloaded successfully!');
+    } catch (error) {
+      console.error('❌ Template download failed:', error);
+      showToast('Failed to download template. Please try again.', 'error');
     }
   };
 
@@ -659,14 +705,29 @@ const ZuperChecklistTool = () => {
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-50">
       {/* Enhanced Error Modal */}
       {detailedError && (
-        <ErrorModal 
-          error={detailedError} 
-          onClose={() => setDetailedError(null)}
-          onRetry={() => {
-            setDetailedError(null);
-            extractChecklist();
-          }}
-        />
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg p-6 max-w-md w-full">
+            <h3 className="text-lg font-semibold text-red-600 mb-4">Error Details</h3>
+            <p className="text-gray-700 mb-4">{detailedError.error}</p>
+            <div className="flex gap-3">
+              <button
+                onClick={() => setDetailedError(null)}
+                className="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700"
+              >
+                Close
+              </button>
+              <button
+                onClick={() => {
+                  setDetailedError(null);
+                  extractChecklist();
+                }}
+                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+              >
+                Retry
+              </button>
+            </div>
+          </div>
+        </div>
       )}
 
       {/* Header */}
@@ -1041,6 +1102,106 @@ const ZuperChecklistTool = () => {
                   <Upload className="w-6 h-6 text-blue-600" />
                   Upload Checklist File
                 </h2>
+
+                {/* Download Template Button */}
+                <div className="mb-6 flex justify-center">
+                  <button
+                    onClick={downloadTemplate}
+                    className="px-6 py-3 bg-green-600 text-white font-semibold rounded-xl hover:bg-green-700 transform hover:scale-105 transition-all duration-200 flex items-center gap-3 shadow-lg"
+                  >
+                    <Download className="w-5 h-5" />
+                    Download Excel Template
+                  </button>
+                </div>
+
+                {/* Template Information Section */}
+                <div className="mb-6 bg-blue-50 border border-blue-200 rounded-xl p-6">
+                  <div className="flex items-center gap-2 mb-4">
+                    <Info className="w-5 h-5 text-blue-600" />
+                    <h3 className="text-lg font-semibold text-blue-800">Template Format Guide</h3>
+                  </div>
+                  
+                  <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    {/* Allowed Types */}
+                    <div>
+                      <h4 className="font-medium text-gray-800 mb-3 flex items-center gap-2">
+                        <div className="w-2 h-2 bg-blue-600 rounded-full"></div>
+                        Allowed Types
+                      </h4>
+                      <div className="space-y-2 max-h-40 overflow-y-auto">
+                        {templateInfo.allowedTypes.map((type, index) => (
+                          <div key={index} className="text-sm">
+                            <code className="bg-white px-2 py-1 rounded text-blue-700 font-mono text-xs">
+                              {type.keyword}
+                            </code>
+                            <span className="text-gray-600 ml-2">{type.description}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                    
+                    {/* Required Keywords */}
+                    <div>
+                      <h4 className="font-medium text-gray-800 mb-3 flex items-center gap-2">
+                        <div className="w-2 h-2 bg-green-600 rounded-full"></div>
+                        Required Field Keywords
+                      </h4>
+                      <div className="space-y-2">
+                        {templateInfo.requiredKeywords.map((keyword, index) => (
+                          <div key={index} className="text-sm">
+                            <code className="bg-white px-2 py-1 rounded text-green-700 font-mono text-xs">
+                              {keyword.keyword}
+                            </code>
+                            <span className="text-gray-600 ml-2">{keyword.description}</span>
+                          </div>
+                        ))}
+                      </div>
+                      
+                      <h4 className="font-medium text-gray-800 mb-3 mt-4 flex items-center gap-2">
+                        <div className="w-2 h-2 bg-purple-600 rounded-full"></div>
+                        Dependent Field Keywords
+                      </h4>
+                      <div className="space-y-2">
+                        {templateInfo.dependentKeywords.map((keyword, index) => (
+                          <div key={index} className="text-sm">
+                            <code className="bg-white px-2 py-1 rounded text-purple-700 font-mono text-xs">
+                              {keyword.keyword}
+                            </code>
+                            <span className="text-gray-600 ml-2">{keyword.description}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                    
+                    {/* Example Format */}
+                    <div>
+                      <h4 className="font-medium text-gray-800 mb-3 flex items-center gap-2">
+                        <div className="w-2 h-2 bg-orange-600 rounded-full"></div>
+                        Example Format
+                      </h4>
+                      <div className="bg-white rounded-lg p-3 border">
+                        <pre className="text-xs text-gray-700 font-mono whitespace-pre-wrap overflow-x-auto">
+                          {templateInfo.exampleFormat}
+                        </pre>
+                      </div>
+                      <div className="mt-3 text-xs text-gray-500">
+                        <p><strong>Note:</strong> For dropdown/radio/checkbox, separate options with commas</p>
+                        <p><strong>Dependent fields:</strong> Use exact question text or field ID in dependentOn column</p>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  {/* Quick Tips */}
+                  <div className="mt-4 pt-4 border-t border-blue-200">
+                    <h4 className="font-medium text-gray-800 mb-2">💡 Quick Tips:</h4>
+                    <ul className="text-sm text-gray-600 space-y-1">
+                      <li>• Use the exact keywords shown above (case-sensitive)</li>
+                      <li>• Leave option column empty for text fields, dates, etc.</li>
+                      <li>• For dependent fields: specify the parent question in 'dependentOn' and trigger values in 'dependentOptions'</li>
+                      <li>• Download the template above for the correct format</li>
+                    </ul>
+                  </div>
+                </div>
                 
                 <div
                   className={`border-2 border-dashed rounded-2xl p-12 text-center cursor-pointer transition-all duration-300 ${
